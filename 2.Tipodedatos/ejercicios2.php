@@ -5,17 +5,17 @@ Los precios sin IVA serán: 22.50, 29.90 y 18.30 (expresado en EUR)*/
 
 <?php
 echo"<pre>>";
-// Definir los productos y sus precios sin IVA en una lista
+// Definimos los productos y sus precios sin IVA en una lista
 $productos = [
     ["nombre" => "Producto 1", "precio_sin_iva" => 22.50],
     ["nombre" => "Producto 2", "precio_sin_iva" => 29.90],
     ["nombre" => "Producto 3", "precio_sin_iva" => 18.30],
 ];
 
-// Definir la tasa de IVA
+// Definimos la tasa de IVA
 $iva_porcentaje = 21;
 
-// Mostrar los productos con sus precios y cálculos
+// Mostramos los productos con sus precios y calculos
 foreach ($productos as $producto) {
     $importe_iva = ($producto["precio_sin_iva"] * $iva_porcentaje) / 100;
     $precio_total = $producto["precio_sin_iva"] + $importe_iva;
@@ -34,17 +34,17 @@ Modificar el ejercicio anterior redondeando los precios a 2 decimales.*/
 
 <?php
 echo"<pre>>";
-// Definir los productos y sus precios sin IVA
+// Definimos los productos y sus precios sin IVA
 $productos = [
     ["nombre" => "Producto 1", "precio_sin_iva" => 22.50],
     ["nombre" => "Producto 2", "precio_sin_iva" => 29.90],
     ["nombre" => "Producto 3", "precio_sin_iva" => 18.30],
 ];
 
-// Definir la tasa de IVA
+// Definimos la tasa de IVA
 $iva_porcentaje = 21;
 
-// Mostrar los productos con sus precios y cálculos añadiendo number_format para redondearlo a 2 decimales
+// Mostramos los productos con sus precios y calculos añadiendo number_format para redondearlo a 2 decimales
 foreach ($productos as $producto) {
     $importe_iva = ($producto["precio_sin_iva"] * $iva_porcentaje) / 100;
     $precio_total = $producto["precio_sin_iva"] + $importe_iva;
@@ -72,28 +72,28 @@ Todos los importes llevarán separador de miles y 2 decimales.*/
 
 <?php
 echo"<pre>>";
-// Definir el primer producto y su precio sin IVA
+// Definimos el primer producto y su precio sin IVA
 $producto = [
     "nombre" => "Producto 1",
     "precio_sin_iva" => 22.50
 ];
 
-// Definir la cantidad comprada
+// Definimos la cantidad comprada
 $cantidad_comprada = 55;
 
-// Definir la tasa de IVA
+// Definimos la tasa de IVA
 $iva_porcentaje = 21;
 
-// Calcular el precio total sin IVA
+// Calculamos el precio total sin IVA
 $precio_total_sin_iva = $producto["precio_sin_iva"] * $cantidad_comprada;
 
-// Calcular el importe total del IVA
+// Calculamos el importe total del IVA
 $importe_total_iva = ($precio_total_sin_iva * $iva_porcentaje) / 100;
 
-// Calcular el importe total de la compra
+// Calculamos el importe total de la compra
 $importe_total_compra = $precio_total_sin_iva + $importe_total_iva;
 
-// Mostrar los resultados
+// Mostramos los resultados
 echo "Producto: " . $producto["nombre"] . "\n";
 echo "Cantidad comprada: " . number_format($cantidad_comprada) . "\n";
 echo "Precio unitario sin IVA: " . number_format($producto["precio_sin_iva"], 2, ',', '.') . " EUR\n";
@@ -109,30 +109,30 @@ de descuento, detallando el total descontado y el precio final con descuento.
 
 <?php
 echo"<pre>>";
-// Definir el primer producto y su precio sin IVA
+// Definimos el primer producto y su precio sin IVA
 $producto = [
     "nombre" => "Producto 1",
     "precio_sin_iva" => 24.50
 ];
 
-// Definir la cantidad comprada
+// Definimos la cantidad comprada
 $cantidad_comprada = 55;
 
-// Definir la tasa de IVA
+// Definimos la tasa de IVA
 $iva_porcentaje = 21;
 
-// Calcular el precio total sin IVA
+// Calculamos el precio total sin IVA
 $precio_total_sin_iva = $producto["precio_sin_iva"] * $cantidad_comprada;
 
-// Calcular el importe total del IVA
+// Calculamos el importe total del IVA
 $importe_total_iva = ($precio_total_sin_iva * $iva_porcentaje) / 100;
 
-// Calcular el importe total de la compra
+// Calculamos el importe total de la compra
 $importe_total_compra = $precio_total_sin_iva + $importe_total_iva;
 
 
 
-// Mostrar los resultados
+// Mostramos los resultados
 echo "Producto: " . $producto["nombre"] . "\n";
 echo "Cantidad comprada: " . number_format($cantidad_comprada) . "\n";
 echo "Precio unitario sin IVA: " . number_format($producto["precio_sin_iva"], 2, ',', '.') . " EUR\n";
@@ -168,10 +168,12 @@ g) C dividido entre B es menor que (A*C)*/
 <?php
 echo"<pre>>";
 
+//Definimos cada una de las variables
 $A = 6;
 $B = 2;
 $C = -10;
 
+//Hacemos condiciones con el if y else
 if($A > 3){
 echo "a) A es mayor que 3 = Verdadero" . "\n";
 }else{
