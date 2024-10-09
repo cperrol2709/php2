@@ -163,7 +163,7 @@ c) A es menor que C más B
 d) El producto de A y B es 15
 e) La suma A+B es 8 y la resta A-B es 4
 f) A es mayor que 3, b es mayor que 0 y c es mayor que 3
-g) C dividido entre B es menor que (A*C)*/
+g) C dividido entre B es menor que (A*C)
 
 <?php
 echo"<pre>>";
