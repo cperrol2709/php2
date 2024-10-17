@@ -31,7 +31,7 @@ echo "<img src='imagenes/dado$dado2.png' alt='Dado $dado2' width='150' height='1
 echo "<img src='imagenes/dado$dado3.png' alt='Dado $dado3' width='150' height='150'>";
 echo "<img src='imagenes/dado$dado4.png' alt='Dado $dado4' width='150' height='150'>";
 echo "<img src='imagenes/dado$dado5.png' alt='Dado $dado5' width='150' height='150'>";
-echo "<img src='imagenes/dado$dado6.png' alt='Dado $dado6' width='150' height='150'>";
+echo "<img src='imagenes/dado$dado6.png' alt='Dado $dado6' width='150' height='150'>";  
 
 echo "<br>";//Espacio
 
