@@ -29,7 +29,7 @@ total de viajeros que han hecho uso de cada parada (subido o bajado). (1,5 punto
 <?php
 echo "<pre>";
 
-//Creamos un array por cada linea , y dentro de cada linea , toda la informacion necesaria , con un array de paradas 
+//Creamos un array por cada linea , y dentro de cada linea , toda la informacion necesaria , con un array con toda la informacion por cada parada
 $Linea1 = [
     "longitud_linea" => 100,
     "maximo_numero_trenes" => 5,
@@ -62,6 +62,7 @@ $Linea3 = [
 
 //1. Mostrar los arrays generados por cada línea de metro. (1 punto)
 
+//Mostramos cada linea de metro con un print_r para que muestre el array
 echo "----------------------------------------------- \n";
 echo "Linea 1 \n";
 echo "----------------------------------------------- \n";
@@ -85,47 +86,87 @@ echo "<br>";
 
 //2. Calcula los kilómetros totales de las líneas consideradas. (1,5 puntos)
 
+//Creamos una variable y le asignamos la longitud de cada linea 
 $km1 = $Linea1["longitud_linea"];
 $km2 = $Linea2["longitud_linea"];
 $km3 = $Linea3["longitud_linea"];
 
+//Creamos una variable para sumar las longitudes
 $km_totales = $km1 + $km2 + $km3;
 
+//Mostramos el resultado
 echo "----------------------------------------------- \n";
 echo "Los kilometros totales son : $km_totales \n";
 echo "----------------------------------------------- \n";
 
 //3. Del total de líneas de metro consideradas, contar el número total de paradas y el número de paradas que tienen transbordo. (1,5 puntos)
 
+//Creamos un array con todas las lineas
 $lineas = [$Linea1, $Linea2, $Linea3];
 
+//Creamos una variable de totalParadas y totalTransbordos
 $totalParadas = 0;
 $totalTransbordos = 0;
 
+//Creamos un array para acceder a cada una de las lineas
 foreach ($lineas as $linea) {
     $totalParadas = $totalParadas + count($linea) - 2; // Restamos 2 para excluir longitud_linea y maximo_numero_trenes
-    foreach ($linea as $parada) {
-        if (is_array($parada) && $parada['Transbordo']) {
-            $totalTransbordos++;
+    foreach ($linea as $parada) {//Dentro de cada linea accedemos a cada parada
+        if (is_array($parada) && $parada['Transbordo']) {//Comprobamos que existe Transbordo
+            $totalTransbordos++;//Sumamos si es true a la variable totalTransbordos
         }
     }
 }
 
+//Mostramos el resultado
 echo "Número total de paradas: $totalParadas\n";
 echo "Número de paradas con transbordo: $totalTransbordos\n";
 echo "----------------------------------------------- \n";
 
 //4. Nombrar las paradas con transbordo. (1 punto)
 
+//Creamos un array para acceder a cada una de las lineas
 foreach ($lineas as $linea) {
-    foreach ($linea as $parada) {
-        if (is_array($parada) && $parada['Transbordo']) {
-            $paradasConTransbordo[] = $parada['Nombre']; // Agregar el nombre al arreglo
+    foreach ($linea as $parada) {//Dentro de cada linea accedemos a cada parada
+        if (is_array($parada) && $parada['Transbordo']) {//Comprobamos que existe Transbordo
+            $paradasConTransbordo[] = $parada['Nombre']; // Creamos un array vacio y vamos añadiendo el nombre de cada parada
         }
     }
 }
 
+//Mostramos el resultado
 print_r($paradasConTransbordo);
+
+echo "----------------------------------------------- \n";
+
+//5. A partir de una línea de metro al azar, indicar qué línea ha sido la obtenida al azar y obtener un array solo con los nombres de las paradas de esa línea y el número total de viajeros que han hecho uso de cada parada (subido o bajado). (1,5 puntos)
+
+$indiceAleatorio = array_rand($lineas);
+$lineaAleatoria = $lineas[$indiceAleatorio];
+
+// Creamos un array con los nombres de las paradas y el número total de viajeros
+$paradasViajeros = [];
+
+foreach ($lineaAleatoria as $parada) {
+    if (is_array($parada)) {// Comprobamos que el elemento actual es un array (una parada)
+        $nombre = $parada['Nombre']; // Extraemos el nombre de la parada
+        $totalViajeros = $parada['NumPersonasSubido'] + $parada['NumPersonasBajado'];// Calculamos el total de viajeros sumando las personas que subieron y las que bajaron
+        $paradasViajeros[$nombre] = $totalViajeros;// Almacenamos el nombre de la parada y el total de viajeros en el array de resultados
+    }
+}
+
+// Mostrar el resultado
+print_r($paradasViajeros);
+
+echo "----------------------------------------------- \n";
+
+//6. Ordenar el array anterior por números de pasajeros. (0,5puntos)
+
+arsort($paradasViajeros); // Ordenamos el array por el número de pasajeros con arsort
+
+// Mostramos el array ordenado
+echo "Paradas ordenadas por número de pasajeros:\n";
+print_r($paradasViajeros);
 
 echo "</pre>";
 ?>

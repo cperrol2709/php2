@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     // Formateamos el DNI para mostrarlo como queremos
-    $dniFormateado = number_format($dni, 0, '', '.') . $letra;
+    $dniFormateado = $dni . $letra;
 
     //Mostramos la informacion
     echo "<div style='border: 2px solid #000; padding: 10px; width: 300px;'>";
