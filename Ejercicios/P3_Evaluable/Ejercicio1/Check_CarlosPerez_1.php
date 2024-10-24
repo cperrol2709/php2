@@ -58,3 +58,4 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 } else {
     echo "<p>Por favor, envía el formulario.</p>";
 }
+?>

@@ -1,0 +1,53 @@
+<html>
+<head> <title>Ejemplos de PHP:</title> </head>
+<body>
+<form action=ej22.php METHOD=POST>
+    <p>Número de elementos: 3 x 3
+        <br>Introduzca los elementos de la matriz: </br>
+        <input type=text size=3 name=A[0][0]>
+        <input type=text size=3 name=A[0][1]>
+        <input type=text size=3 name=A[0][2]>
+        <p></p>
+        <input type=text size=3 name=A[1][0]>
+        <input type=text size=3 name=A[1][1]>
+        <input type=text size=3 name=A[1][2]>
+        <p></p>
+        <input type=text size=3 name=A[2][0]>
+        <input type=text size=3 name=A[2][1]>
+        <input type=text size=3 name=A[2][2]>
+        <p></p>
+        <br>Selecciona una fila:  
+            <select name=fil>
+                <option> 1 </option>
+                <option> 2 </option>
+                <option> 3 </option>
+            </select>
+            <br>Selecciona una columna:   
+            <select name=col>
+                <option> 1 </option>
+                <option> 2 </option>
+                <option> 3 </option>
+            </select>
+            <br>Introduzca la trayectoria: 
+            <select name=tr>
+                <option value=1>Arriba</option>
+                <option value=2>Arriba y a la derecha</option>
+                <option value=3> A la derecha </option>
+                <option value=4> Abajo y a la derecha</option>
+                <option value=5> Abajo</option>
+                <option value=6> Abajo y a la izquierda</option>
+                <option value=7> A la izquierda </option>
+                <option value=8> Arriba y la izquierda </option>
+            </select>
+            <br>
+            <p></p>
+            <br>
+            <input name=Enviar type=submit value="Enviar">
+            <input name=Borrar type=reset value="Borrar">
+            </br>
+            <input type="hidden" name="N" value="3">
+            <p>
+            <a href="ej20.php">Volver al inicio.</a></p>
+</form>
+</body>
+</html>
