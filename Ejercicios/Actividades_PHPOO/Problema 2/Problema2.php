@@ -64,14 +64,15 @@ class Persona
 
     public function nombreCompleto()
     {
-        return $this-> nombre + $this -> apellidos;
+        $nombre_completo = $this-> nombre . " " . $this -> apellidos;
+        return $nombre_completo;
     }
 }
 
 $persona1 = new Persona("Juan", "Perez", 19);
 
-echo $persona1->mayorEdad();
-echo $persona1->nombreCompleto();
+echo $persona1->mayorEdad() . "\n";
+echo "El nombre completo es " . $persona1->nombreCompleto();
 
 echo "</pre>";
 ?>

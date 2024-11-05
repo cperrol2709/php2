@@ -42,7 +42,7 @@ class Producto
         $this->stock = $stock;
     }
 
-    // Métodos getter y setter para cada propiedad
+    // Metodos getter y setter implementando los correspondientes cambios
 
     public function getTitulo()
     {
@@ -111,7 +111,7 @@ class Producto
         $this->stock = $stock;
     }
 
-    // Método para actualizar el precio con impuestos
+    // Metodo para actualizar el precio con impuestos
     private function actualizarPrecioConImpuestos()
     {
         $this->precio_con_impuestos = $this->precios_sin_impuestos * (1 + $this->porcentajes_impuestos / 100);
@@ -129,8 +129,7 @@ echo "Porcentaje de impuestos: " . $producto->getPorcentaje_impuesto() . "%\n";
 echo "Precio con impuestos: " . $producto->getPrecio_con_impuesto() . "€\n";
 echo "Stock: " . $producto->getStock() . "\n";
 
-// Cambiar el porcentaje de impuestos para ver cómo se recalcula el precio con impuestos
-$producto->setPorcentaje_impuesto(10); // Cambia el porcentaje a 10%
+$producto->setPorcentaje_impuesto(10); 
 echo "Nuevo porcentaje de impuestos: " . $producto->getPorcentaje_impuesto() . "%\n";
 echo "Nuevo precio con impuestos: " . $producto->getPrecio_con_impuesto() . "€\n";
 
