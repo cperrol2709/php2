@@ -1,3 +1,8 @@
+<?php
+require_once("../utiles/funciones.php");
+require_once("../utiles/variables.php");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,7 +116,7 @@
 			
 
         	// redireccionamos al listado de sedes
-  			header("Location: listado.php");
+  			header("Location:listado.php");
   			
     	endif;
     ?>
