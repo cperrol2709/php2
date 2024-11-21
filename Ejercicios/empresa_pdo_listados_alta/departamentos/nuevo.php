@@ -29,7 +29,7 @@ require_once("../utiles/variables.php");
 
 		// Requisitos de validación
 		$lonDepMin = 3;
-		$lonDepMax = 50;
+		$lonDepMax = 100;
 
 		// Obtener valores de los campos
 		$departamento = obtenerValorCampo("nombre");
