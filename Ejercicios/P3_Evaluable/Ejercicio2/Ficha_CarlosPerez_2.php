@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Mostramos las preferencias del usuario solo si no hay errores
     if (!$hayErrores) {
         
-        $gustos = []; // Creamos un array vacío para almacenar las preferencias
+        $gustos = []; // Creamos un array vacio para almacenar las preferencias
 
         // Dependiendo de lo que el usuario seleccione, lo añadimos al array de gustos
         if ($cine) $gustos[] = "el cine";
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if ($musica) $gustos[] = "la música";
         if ($otros) $gustos[] = "otros";
 
-        // Si el array de gustos no está vacío, mostramos las preferencias seleccionadas
+        // Si el array de gustos no esta vacio, mostramos las preferencias seleccionadas
         if (!empty($gustos)) {
             echo "<p>Le gusta: <strong>" . implode(", ", $gustos) . "</strong>.</p>";
         }
