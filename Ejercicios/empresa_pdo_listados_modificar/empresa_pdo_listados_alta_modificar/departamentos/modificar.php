@@ -17,6 +17,11 @@
     <?php
 		// crea las variables para la comprobación de los datos y conectamos con la BBDD para obtener y pintar los datos de la id que acabamos de enviar a la página
 
+		$errores = [];
+   		$idDepartamento = 0;
+		$nombre = "";
+		$presupuesto = 0;
+		$sede_id = 0;
     	    	
     	if (count($_REQUEST) > 0) 
     	{
@@ -25,46 +30,63 @@
             	$idDepartamento = $_GET["idDepartamento"];
 
             	//Conectamos a la BBDD
-            
+				$conexion = conectarpdo($host, $user, $password, $bbdd);
         		// Montamos la consulta a ejecutar
-        	
+				$select = "SELECT id,nombre,presupuesto,sede_id FROM departamentos d WHERE d.id = ? ";
 		        // prepararamos la consulta
-			
+				$consulta = $conexion->prepare($select);
 		        // parámetro (usamos bindParam)
-		    
+				$consulta->bindParam(1, $idDepartamento);
 		        // ejecutamos la consulta 
+				$consulta->execute();
 
 		        // comprobamos si hay algún registro 
 				if ($consulta->rowCount() == 0)
 				{
 					//Si no lo hay, desconectamos y volvemos al listado original
+					$consulta = null;
+					$conexion = null;
+					header("Location: listado.php");
+					exit();
 				}
 				else 
 				{
 					// Si hay algún registro, Obtenemos el resultado (usamos fetch())
+					$registro = $consulta->fetch();
+					$nombre = $registro['nombre'];
+					$presupuesto = $registro['presupuesto'];
+					$sede_id = $registro['sede_id'];
+	            	$consulta = null;
+		        	$conexion = null;
 				}
             } 
             else 
             {
+				$comprobarValidacion = true;
 		    	// Comenzamos la comprobación de los datos introducidos.
 				// Creamos las variables con los requisitos de cada campo
-
+				$lonDepMin=3;
+				$lonDepMax=100;
 			    
 			    // Obtenemos el campo del departamento, presupuesto y sede
 			    
-			 
+				$idDepartamento = obtenerValorCampo("id");
+				$nombre = obtenerValorCampo("nombre");
+				$presupuesto = obtenerValorCampo("presupuesto");
+				$sede_id = obtenerValorCampo("sede_id");
 
-				 //-----------------------------------------------------
+				//-----------------------------------------------------
 		        // Validaciones
 		        //-----------------------------------------------------
 				// Comprueba que el id del departamento se corresponde con uno que tengamos 
 				//conectamos a la bbdd
-
+				$conexion = conectarpdo($host, $user, $password, $bbdd);
 	        	// preparamos la consulta SELECT a ejecutar
-
+				$select = "SELECT id,nombre,presupuesto,sede_id FROM departamentos d WHERE d.id = ? ";
 				// preparamos la consulta (bindParam)
-
+				$consulta = $conexion->prepare($select);
 				// ejecutamos la consulta 
+				$consulta->execute();
 
 				// comprobamos si algún registro 
 				if ($consulta->rowCount() == 0)

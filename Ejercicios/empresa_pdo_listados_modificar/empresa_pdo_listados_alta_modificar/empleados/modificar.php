@@ -17,105 +17,158 @@
     <?php
 		// crea las variables para la comprobación de los datos y conectamos con la BBDD para obtener y pintar los datos de la id que acabamos de enviar a la página
 
+		$errores = [];
+		$idEmpleado = 0;
+		$nombre = "";
+		$email = "";
+		$apellidos = "";
+		$salario = "";
+		$hijos = 0;
+		$departamento_id = 0;
+		$pais_id = 0;
+
     	    	
     	if (count($_REQUEST) > 0) 
     	{
 
     		if (isset($_GET["idEmpleado"])) 
     		{
+				//Obtenemos los datos del empleado. Para ello
             	$idEmpleado = $_GET["idEmpleado"];
-
-            	//Obtenemos los datos del empleado. Para ello
             	//Conectamos a la BBDD
-            
+				$conexion = conectarpdo($host, $user, $password, $bbdd);
         		// Montamos la consulta a ejecutar
-        	
+				$select = "SELECT id,nombre,email,apellidos,salario,hijos,departamento_id,pais_id FROM empleados e WHERE e.id = ? ";
 		        // prepararamos la consulta
-			
+				$consulta = $conexion->prepare($select);
 		        // parámetro (usamos bindParam)
-		    
+				$consulta->bindParam(1, $idEmpleado);
 		        // ejecutamos la consulta 
-
+				$consulta->execute();
 		        // comprobamos si hay algún registro 
 				if ($consulta->rowCount() == 0)
 				{
 					//Si no lo hay, desconectamos y volvemos al listado original
+					$consulta = null;
+					$conexion = null;
+					header("Location: listado.php");
+					exit();
 				}
 				else 
 				{
 					// Si hay algún registro, Obtenemos el resultado (usamos fetch())
-			        
+			        $registro = $consulta->fetch();
+					$idEmpleado = $registro['id'];
+					$nombre = $registro['nombre'];
+					$email = $registro['email'];
+					$apellidos = $registro['apellidos'];
+					$salario = $registro['salario'];
+					$hijos = $registro['hijos'];
+					$departamento_id = $registro['departamento_id'];
+					$pais_id = $registro['pais_id'];
+					$consulta = null;
+		        	$conexion = null;
 				}
-
             } 
             else 
             {
+				$comprobarValidacion = true;
 				// Comenzamos la comprobación de los datos introducidos.
 				// Creamos las variables con los requisitos de cada campo (función "obtenerValorCampo")
     			
+					$lonNomEmpMin = 3;
+					$lonNomEmpMax = 50;
+					$lonApellEmpMin = 3;
+					$lonApellEmpMax = 150;
+					$longitudMaximaEmail = 120;
+					$numHijosMin = 0;
+					$numHijosMax = 10;
+
+				
+					$idEmpleado = obtenerValorCampo('id');
+					$nombre = obtenerValorCampo('nombre');
+					$email = obtenerValorCampo('email');
+					$apellidos = obtenerValorCampo('apellidos');
+					$salario = obtenerValorCampo('salario');
+					$hijos = obtenerValorCampo('hijos');
+					$departamento_id = obtenerValorCampo('departamento_id');
+					$pais_id = obtenerValorCampo('pais_id');
 			    
 		    	//-----------------------------------------------------
 		        // Validaciones
 		        //-----------------------------------------------------
 		        // Compruebo que el id del empleado se corresponde con uno que tengamos 
 	        	//conectamos a la bbdd
-
+				$conexion = conectarpdo($host, $user, $password, $bbdd);
 	        	// preparamos la consulta SELECT a ejecutar
-
+				$select = "SELECT id,nombre,email,apellidos,salario,hijos,departamento_id,pais_id FROM empleados e WHERE e.id = ? ";
 				// preparamos la consulta (bindParam)
-
+				$consulta = $conexion->prepare($select);
+				// parámetro (usamos bindParam)
+				$consulta->bindParam(1, $idEmpleado);
 				// ejecutamos la consulta 
+				$consulta->execute();
 
 				// comprobamos si algún registro 
 				if ($consulta->rowCount() == 0)
 				{
 					//Si no lo hay, desconectamos y volvemos al listado original
+					$consulta = null;
+       				$conexion = null;
 				}
 		        // Nombre del empleado: validamos la longitud. Si no es correcta, generamos el error.
-		        if (!validarLongitudCadena($, $ ,$)) 
+		        if (!validarLongitudCadena($nombre, $lonNomEmpMin ,$lonNomEmpMax)) 
 		        {
 					//Generar msj de error
+					$errores["nombre"] = 'El nombre del empleado no cumple los requisitos.';
+        			$nombre = "";
 		        }
 
 		        // Apellidos del empleado: validamos la longitud. Si no es correcta, generamos el error.
-		        if (!validarLongitudCadena($, $ ,$)) 
+		        if (!validarLongitudCadena($apellidos, $lonApellEmpMin ,$lonApellEmpMax)) 
 		        {
-					//Generar msj de error
+					$errores["apellidos"] = 'Los apellidos del empleado no cumple los requisitos.';
+        			$apellidos = "";
 		        }
 
 		        // Correo electrónico del empleado: validamos que sea un email (validarEmail) y la longitud máxima.
-		        if (!validarEmail($))
+		        if (!validarEmail($email))
 		        {
-		            //Generar msj de error
+		            $errores["email"] = 'El email del empleado no cumple los requisitos.';
+        			$email = "";
 		        }
 		        elseif (strlen($email)>$longitudMaximaEmail)
 		        {
-					//Generar msj de error
+					$errores["email"] = 'El email del empleado supera la longitud maxima.';
+        			$email = "";
 		        }
 
 		        // El número de hijos del empleado: validamos con validarEnteroLimites()
-		        if (!validarEnteroLimites($, $,$))
+		        if (!validarEnteroLimites($hijos, $numHijosMin,$numHijosMax))
 		        {
-		           //Generar msj de error
-		        }
+					$errores["hijos"] = 'El numero de hijos del empleado no cumple los requisitos.';
+        			$hijos = "";		        }
 
 		        // Salario del empleado: validamos que sea decimal positivo validarDecimalPositivo().
-		        if (!validarDecimalPositivo($))
+		        if (!validarDecimalPositivo($salario))
 		        {
-		            //Generar msj de error
+		            $errores["salario"] = 'El salario del empleado no cumple los requisitos.';
+        			$hijos = "";
 		        } 
 
 		        // Nombre del departamento (el id): validamos con validarEnteroLimites()
-		        if (!validarEnteroPositivo($))
+		        if (!validarEnteroPositivo($idEmpleado))
 		        {
-		            //Generar msj de error
+		            $errores["id"] = 'El id del empleado no cumple los requisitos.';
+        			$id = "";
 		        }
 		        
 
 		        // Nacionalidad del empleado (el id): validamos con validarEnteroLimites()
 		        if (!validarEnteroPositivo($nacionalidad))
 		        {
-		            //Generar msj de error
+		            $errores["id"] = 'El id del empleado no cumple los requisitos.';
+        			$id = "";
 		        }
 		    }
     	}
