@@ -1,6 +1,7 @@
 <?php
-    require_once("../utiles/variables.php");
-    require_once("../utiles/funciones.php");
+// Se incluyen las variables y funciones necesarias para la conexión y validaciones.
+require_once("../utiles/variables.php");
+require_once("../utiles/funciones.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,338 +9,174 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modificar departamento</title>
+    <title>Modificar empleado</title>
     <link rel="stylesheet" type="text/css" href="../css/estilos.css">
 </head>
 <body>
-<body>
     <h1>Modificar empleado</h1>
     <?php
-		// crea las variables para la comprobación de los datos y conectamos con la BBDD para obtener y pintar los datos de la id que acabamos de enviar a la página
+    // Se inicializa el array de errores y se recupera el ID del empleado desde GET, si está disponible.
+    $errores = [];
+    $idEmpleado = $_GET["idEmpleado"] ?? null;
 
-		$errores = [];
-		$idEmpleado = 0;
-		$nombre = "";
-		$email = "";
-		$apellidos = "";
-		$salario = "";
-		$hijos = 0;
-		$departamento_id = 0;
-		$pais_id = 0;
+    // Conexión a la base de datos.
+    $conexion = conectarPDO($host, $user, $password, $bbdd);
 
-    	    	
-    	if (count($_REQUEST) > 0) 
-    	{
+    // Si el formulario se carga por primera vez con el método GET y un ID válido.
+    if ($_SERVER["REQUEST_METHOD"] === "GET" && $idEmpleado) {
+        // Consulta para obtener los datos del empleado según su ID.
+        $consulta = "SELECT * FROM empleados WHERE id = :idEmpleado";
+        $stmt = $conexion->prepare($consulta);
+        $stmt->bindParam(":idEmpleado", $idEmpleado, PDO::PARAM_INT);
+        $stmt->execute();
 
-    		if (isset($_GET["idEmpleado"])) 
-    		{
-				//Obtenemos los datos del empleado. Para ello
-            	$idEmpleado = $_GET["idEmpleado"];
-            	//Conectamos a la BBDD
-				$conexion = conectarpdo($host, $user, $password, $bbdd);
-        		// Montamos la consulta a ejecutar
-				$select = "SELECT id,nombre,email,apellidos,salario,hijos,departamento_id,pais_id FROM empleados e WHERE e.id = ? ";
-		        // prepararamos la consulta
-				$consulta = $conexion->prepare($select);
-		        // parámetro (usamos bindParam)
-				$consulta->bindParam(1, $idEmpleado);
-		        // ejecutamos la consulta 
-				$consulta->execute();
-		        // comprobamos si hay algún registro 
-				if ($consulta->rowCount() == 0)
-				{
-					//Si no lo hay, desconectamos y volvemos al listado original
-					$consulta = null;
-					$conexion = null;
-					header("Location: listado.php");
-					exit();
-				}
-				else 
-				{
-					// Si hay algún registro, Obtenemos el resultado (usamos fetch())
-			        $registro = $consulta->fetch();
-					$idEmpleado = $registro['id'];
-					$nombre = $registro['nombre'];
-					$email = $registro['email'];
-					$apellidos = $registro['apellidos'];
-					$salario = $registro['salario'];
-					$hijos = $registro['hijos'];
-					$departamento_id = $registro['departamento_id'];
-					$pais_id = $registro['pais_id'];
-					$consulta = null;
-		        	$conexion = null;
-				}
-            } 
-            else 
-            {
-				$comprobarValidacion = true;
-				// Comenzamos la comprobación de los datos introducidos.
-				// Creamos las variables con los requisitos de cada campo (función "obtenerValorCampo")
-    			
-					$lonNomEmpMin = 3;
-					$lonNomEmpMax = 50;
-					$lonApellEmpMin = 3;
-					$lonApellEmpMax = 150;
-					$longitudMaximaEmail = 120;
-					$numHijosMin = 0;
-					$numHijosMax = 10;
+        // Si no se encuentra el empleado, se muestra un mensaje de error y se detiene la ejecución.
+        if ($stmt->rowCount() === 0) {
+            echo "<p class='error'>No existe un empleado con esa ID.</p>";
+            exit;
+        }
 
-				
-					$idEmpleado = obtenerValorCampo('id');
-					$nombre = obtenerValorCampo('nombre');
-					$email = obtenerValorCampo('email');
-					$apellidos = obtenerValorCampo('apellidos');
-					$salario = obtenerValorCampo('salario');
-					$hijos = obtenerValorCampo('hijos');
-					$departamento_id = obtenerValorCampo('departamento_id');
-					$pais_id = obtenerValorCampo('pais_id');
-			    
-		    	//-----------------------------------------------------
-		        // Validaciones
-		        //-----------------------------------------------------
-		        // Compruebo que el id del empleado se corresponde con uno que tengamos 
-	        	//conectamos a la bbdd
-				$conexion = conectarpdo($host, $user, $password, $bbdd);
-	        	// preparamos la consulta SELECT a ejecutar
-				$select = "SELECT id,nombre,email,apellidos,salario,hijos,departamento_id,pais_id FROM empleados e WHERE e.id = ? ";
-				// preparamos la consulta (bindParam)
-				$consulta = $conexion->prepare($select);
-				// parámetro (usamos bindParam)
-				$consulta->bindParam(1, $idEmpleado);
-				// ejecutamos la consulta 
-				$consulta->execute();
+        // Se obtienen los datos del empleado para rellenar el formulario.
+        $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
+    } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
+        // Si el formulario se envía con POST, se recogen los valores del formulario.
+        $idEmpleado = $_POST["id"];
+        $nombre = $_POST["nombre"] ?? "";
+        $apellidos = $_POST["apellidos"] ?? "";
+        $email = $_POST["email"] ?? "";
+        $salario = $_POST["salario"] ?? 0;
+        $numeroHijos = $_POST["numeroHijos"] ?? 0;
+        $nacionalidad = $_POST["nacionalidad"] ?? null;
+        $departamento = $_POST["departamento"] ?? null;
 
-				// comprobamos si algún registro 
-				if ($consulta->rowCount() == 0)
-				{
-					//Si no lo hay, desconectamos y volvemos al listado original
-					$consulta = null;
-       				$conexion = null;
-				}
-		        // Nombre del empleado: validamos la longitud. Si no es correcta, generamos el error.
-		        if (!validarLongitudCadena($nombre, $lonNomEmpMin ,$lonNomEmpMax)) 
-		        {
-					//Generar msj de error
-					$errores["nombre"] = 'El nombre del empleado no cumple los requisitos.';
-        			$nombre = "";
-		        }
+        // *** Validaciones ***
+        // Validación de longitud del nombre.
+        if (!validarLongitudCadena($nombre, 3, 50)) {
+            $errores["nombre"] = "El nombre debe tener entre 3 y 50 caracteres.";
+        }
+        // Validación de longitud de los apellidos.
+        if (!validarLongitudCadena($apellidos, 3, 150)) {
+            $errores["apellidos"] = "Los apellidos deben tener entre 3 y 150 caracteres.";
+        }
+        // Validación del formato de correo electrónico.
+        if (!validarEmail($email)) {
+            $errores["email"] = "El correo electrónico no es válido.";
+        }
+        // Validación de que el salario sea un número positivo.
+        if (!validarDecimalPositivo($salario)) {
+            $errores["salario"] = "El salario debe ser un número positivo.";
+        }
+        // Validación de que el número de hijos esté entre 0 y 10.
+        if (!validarEnteroLimites($numeroHijos, 0, 10)) {
+            $errores["hijos"] = "El número de hijos debe estar entre 0 y 10.";
+        }
+        // Validación de nacionalidad válida.
+        if (!validarEnteroPositivo($nacionalidad)) {
+            $errores["nacionalidad"] = "Seleccione una nacionalidad válida.";
+        }
+        // Validación de departamento válido.
+        if (!validarEnteroPositivo($departamento)) {
+            $errores["departamento"] = "Seleccione un departamento válido.";
+        }
 
-		        // Apellidos del empleado: validamos la longitud. Si no es correcta, generamos el error.
-		        if (!validarLongitudCadena($apellidos, $lonApellEmpMin ,$lonApellEmpMax)) 
-		        {
-					$errores["apellidos"] = 'Los apellidos del empleado no cumple los requisitos.';
-        			$apellidos = "";
-		        }
+        // Si no hay errores, se actualizan los datos en la base de datos.
+        if (empty($errores)) {
+            $consulta = "UPDATE empleados SET nombre = :nombre, apellidos = :apellidos, email = :email,
+                salario = :salario, hijos = :hijos, pais_id = :nacionalidad, departamento_id = :departamento WHERE id = :idEmpleado";
+            $stmt = $conexion->prepare($consulta);
 
-		        // Correo electrónico del empleado: validamos que sea un email (validarEmail) y la longitud máxima.
-		        if (!validarEmail($email))
-		        {
-		            $errores["email"] = 'El email del empleado no cumple los requisitos.';
-        			$email = "";
-		        }
-		        elseif (strlen($email)>$longitudMaximaEmail)
-		        {
-					$errores["email"] = 'El email del empleado supera la longitud maxima.';
-        			$email = "";
-		        }
+            // Se vinculan los parámetros a la consulta.
+            $stmt->bindParam(":nombre", $nombre);
+            $stmt->bindParam(":apellidos", $apellidos);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":salario", $salario);
+            $stmt->bindParam(":hijos", $numeroHijos);
+            $stmt->bindParam(":nacionalidad", $nacionalidad);
+            $stmt->bindParam(":departamento", $departamento);
+            $stmt->bindParam(":idEmpleado", $idEmpleado, PDO::PARAM_INT);
 
-		        // El número de hijos del empleado: validamos con validarEnteroLimites()
-		        if (!validarEnteroLimites($hijos, $numHijosMin,$numHijosMax))
-		        {
-					$errores["hijos"] = 'El numero de hijos del empleado no cumple los requisitos.';
-        			$hijos = "";		        }
-
-		        // Salario del empleado: validamos que sea decimal positivo validarDecimalPositivo().
-		        if (!validarDecimalPositivo($salario))
-		        {
-		            $errores["salario"] = 'El salario del empleado no cumple los requisitos.';
-        			$hijos = "";
-		        } 
-
-		        // Nombre del departamento (el id): validamos con validarEnteroLimites()
-		        if (!validarEnteroPositivo($idEmpleado))
-		        {
-		            $errores["id"] = 'El id del empleado no cumple los requisitos.';
-        			$id = "";
-		        }
-		        
-
-		        // Nacionalidad del empleado (el id): validamos con validarEnteroLimites()
-		        if (!validarEnteroPositivo($nacionalidad))
-		        {
-		            $errores["id"] = 'El id del empleado no cumple los requisitos.';
-        			$id = "";
-		        }
-		    }
-    	}
-  	?>
-
-  	<?php
-  		//Si hay errores, pintarlos en el correspondiente campo:
-  
-  	?>
-  		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-  			<input type="hidden" name="id" value="<?php echo $idEmpleado ?>">
-	    	<p>
-	            <!-- Campo nombre del empleado -->
-	            <input type="text" name="nombre" placeholder="Nombre" value="<?php //pintamos nombre del empleado ?>">
-	            <?php
-	            	//Si hay error en el nombre...
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en la sede ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo apellidos del empleado -->
-	            <input type="text" name="apellidos" placeholder="Apellidos" value="<?php //pintamos apellidos del empleado ?>">
-	            <?php
-	            	if (isset($errores["apellidos"])):
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en los apellidos ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo correo electrónico del empleado -->
-	            <input type="text" name="email" placeholder="Correo electrónico" value="<?php //pintamos email del empleado ?>">
-	            <?php
-	            	if (isset($errores["email"])):
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en el email ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo salario del empleado -->
-	            <input type="number" step="0.01" name="salario" placeholder="Salario" value="<?php //pintamos salario del empleado ?>">
-	            <?php
-	            	if (isset($errores["salario"])):
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en el salario ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo número de hijos del empleado -->
-	            <input type="number" name="numeroHijos" placeholder="Número de hijos" value="<?php //pintamos hijos del empleado ?>">
-	            <?php
-	            	if (isset($errores["hijos"])):
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en los hijos ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo nacionalidad del empleado -->
-	            <select id="nacionalidad" name="nacionalidad">
-	            	<option value="">Seleccione Nacionalidad</option>
-	            <?php
-				//nos conectamos a la bbdd y pintamos las diferentes nacionalidades en el desplegable, ordenado por nacionalidad.
-	            	$conexion = conectarPDO($host, $user, $password, $bbdd);
-
-	            	$consulta = "SELECT id, nacionalidad FROM paises ORDER BY nacionalidad";
-	            	
-	            	$resultado = resultadoConsulta($conexion, $consulta);
-
-  					while ($row = $resultado->fetch(PDO::FETCH_ASSOC)):
-  				?>
-  					<option value="<?php echo $row["id"]; ?>" <?php echo $row["id"] == $nacionalidad ? "selected" : "" ?>><?php echo $row["nacionalidad"]; ?></option>
-  				<?php
-  					endwhile;
-
-  					$consulta = null;
-
-        			$conexion = null;
-  				?>
-  				</select>
-  				
-	            <?php
-	            	//Si hay error en la nacionalidad...
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en la nacionalidad ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Campo departamento del empleado -->
-	            <select id="departamento" name="departamento">
-	            	<option value="">Seleccione Departamento</option>
-	            <?php
-				//nos conectamos a la bbdd y pintamos los diferentes departamentos en el desplegable, ordenado por el nombre del departamento.
-	            	$conexion = conectarPDO($host, $user, $password, $bbdd);
-
-	            	$consulta = "SELECT id, nombre FROM departamentos ORDER BY nombre";
-	            	
-	            	$resultado = resultadoConsulta($conexion, $consulta);
-
-  					while ($row = $resultado->fetch(PDO::FETCH_ASSOC)):
-  				?>
-  					<option value="<?php echo $row["id"]; ?>" <?php echo $row["id"] == $departamento ? "selected" : ""?>><?php echo $row["nombre"]; ?></option>
-  				<?php
-  					endwhile;
-  					
-  					$consulta = null;
-
-        			$conexion = null;
-  				?>
-  				</select>
-  				
-	            <?php
-	            	//Si hay error en el departamento...
-	            ?>
-	            	<p class="error"><?php //Pintamos el error en el departamento ?></p>
-	            <?php
-	            	endif;
-	            ?>
-	        </p>
-	        <p>
-	            <!-- Botón submit -->
-	            <input type="submit" value="Guadar">
-	        </p>
-	    </form>
-  	<?php
-  		//Si no hay errores:
-		else:
-  			//Nos conectamos a la BBDD
-			
-			// Creamos una variable con la consulta "UPDATE" a ejecutar
-			
-			// preparamos la consulta (bindParam)
-
-			// ejecutamos la consulta 
-
-			
-			// ejecutar la consulta y mostramos el error
-			try 
-			{
-				$consulta->execute();
-			}
-			catch (PDOException $exception)
-			{
-           		exit($exception->getMessage());
-        	}
-
-			$consulta = null;
-
-        	$conexion = null;
-
-        	// redireccionamos al listado de empleados
-  			header("Location: listado.php");
-  			
-    	endif;
+            // Si la consulta se ejecuta correctamente, redirige al listado.
+            if ($stmt->execute()) {
+                header("Location: listado.php");
+                exit;
+            } else {
+                // Si falla la consulta, muestra un mensaje de error.
+                echo "<p class='error'>Error al actualizar el empleado.</p>";
+            }
+        }
+    }
     ?>
-    <div class="contenedor">
-        <div class="enlaces">
-            <a href="listado.php">Volver al listado de empleados</a>
-        </div>
-   	</div>
-    
+    <!-- Formulario para editar los datos del empleado -->
+    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+        <input type="hidden" name="id" value="<?php echo $idEmpleado; ?>">
+        <!-- Campo para el nombre -->
+        <p>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" value="<?php echo htmlspecialchars($empleado['nombre'] ?? ''); ?>">
+            <?php if (isset($errores["nombre"])): ?><span class="error"><?php echo $errores["nombre"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Campo para los apellidos -->
+        <p>
+            <label>Apellidos:</label>
+            <input type="text" name="apellidos" value="<?php echo htmlspecialchars($empleado['apellidos'] ?? ''); ?>">
+            <?php if (isset($errores["apellidos"])): ?><span class="error"><?php echo $errores["apellidos"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Campo para el correo electrónico -->
+        <p>
+            <label>Email:</label>
+            <input type="email" name="email" value="<?php echo htmlspecialchars($empleado['email'] ?? ''); ?>">
+            <?php if (isset($errores["email"])): ?><span class="error"><?php echo $errores["email"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Campo para el salario -->
+        <p>
+            <label>Salario:</label>
+            <input type="number" step="0.01" name="salario" value="<?php echo htmlspecialchars($empleado['salario'] ?? ''); ?>">
+            <?php if (isset($errores["salario"])): ?><span class="error"><?php echo $errores["salario"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Campo para el número de hijos -->
+        <p>
+            <label>Hijos:</label>
+            <input type="number" name="numeroHijos" value="<?php echo htmlspecialchars($empleado['hijos'] ?? ''); ?>">
+            <?php if (isset($errores["hijos"])): ?><span class="error"><?php echo $errores["hijos"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Selección de nacionalidad -->
+        <p>
+            <label>Nacionalidad:</label>
+            <select name="nacionalidad">
+                <option value="">Seleccione</option>
+                <?php
+                // Consulta para obtener los países.
+                $consulta = "SELECT id, nacionalidad FROM paises";
+                $resultado = resultadoConsulta($conexion, $consulta);
+                while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                    $selected = ($row["id"] == ($empleado["pais_id"] ?? "")) ? "selected" : "";
+                    echo "<option value='{$row["id"]}' $selected>{$row["nacionalidad"]}</option>";
+                }
+                ?>
+            </select>
+            <?php if (isset($errores["nacionalidad"])): ?><span class="error"><?php echo $errores["nacionalidad"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Selección de departamento -->
+        <p>
+            <label>Departamento:</label>
+            <select name="departamento">
+                <option value="">Seleccione</option>
+                <?php
+                // Consulta para obtener los departamentos.
+                $consulta = "SELECT id, nombre FROM departamentos";
+                $resultado = resultadoConsulta($conexion, $consulta);
+                while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                    $selected = ($row["id"] == ($empleado["departamento_id"] ?? "")) ? "selected" : "";
+                    echo "<option value='{$row["id"]}' $selected>{$row["nombre"]}</option>";
+                }
+                ?>
+            </select>
+            <?php if (isset($errores["departamento"])): ?><span class="error"><?php echo $errores["departamento"]; ?></span><?php endif; ?>
+        </p>
+        <!-- Botón para guardar -->
+        <p><button type="submit">Guardar</button></p>
+    </form>
+    <!-- Enlace para volver al listado -->
+    <a href="listado.php">Volver al listado</a>
 </body>
 </html>

@@ -8,43 +8,38 @@
 
         if (isset($_GET["idSede"]))
         {
-            // Obtener el ID de la sede desde el parámetro GET
+             //Declarar la variable para la sedeque tomará el valor del $_GET, conectar a la BBDD, definir la consulta a ejecutar (DELETE), 
+            //preparar la consulta (bindParam) y ejecutarla
             $idSede = $_GET["idSede"];
 
-            // Conectamos a la base de datos
             $conexion = conectarpdo($host, $user, $password, $bbdd);
             
-            // Definir la consulta DELETE
-            $deleteQuery = "DELETE FROM sedes WHERE id = ?";
+            $delete = "DELETE FROM sedes WHERE id = ?";
             
-            // Preparamos la consulta
-            $consulta = $conexion->prepare($deleteQuery);
+            $consulta = $conexion->prepare($delete);
             
-            // Vinculamos el parámetro para la consulta
             $consulta->bindParam(1, $idSede, PDO::PARAM_INT);
             
-            // Ejecutamos la consulta
             $resultado = $consulta->execute();
             
-            // Si la eliminación es exitosa
+            //Si todo ha ido bien, mostrar mensaje
             if ($resultado) {
-                // Redirigimos al listado de sedes después de 3 segundos
                 header("refresh:3;url=listado.php");
                 echo "Sede eliminada correctamente. Redirigiendo al listado...";
             } 
+            //Si no ha ido bien, mostrar mensaje 
             else {
-                // Si la eliminación falla, mostramos un mensaje de error
                 header("refresh:3;url=listado.php");
                 echo "Hubo un error al eliminar la sede. Redirigiendo al listado...";
             }
 
-            // Liberar recursos y cerrar conexión
+            //En ambos casos, redireccionar al listado original tras 3 segundos.
             $consulta = null;
             $conexion = null;
         } 
         
     } 
-    // Si no se ha enviado el idSede, redirigimos al listado
+	//Evitar que se pueda entrar directamente a la página .../borrar.php, redireccionando en tal caso a la página del listado
     else {
         header("Location: listado.php");
         exit();

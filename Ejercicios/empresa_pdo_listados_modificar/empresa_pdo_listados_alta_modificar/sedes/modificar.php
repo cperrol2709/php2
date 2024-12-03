@@ -81,7 +81,6 @@
 				//Si no lo hay, desconectamos y volvemos al listado original
 				$consulta = null;
        			$conexion = null;
-       			// redireccionamos al listado de sedes
 				header("Location: listado.php");
 				exit();
 			}

@@ -41,9 +41,9 @@ require_once("../utiles/variables.php");
             <?php
             while ($registro = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 echo "<tr>";
-                echo "<td>" . htmlspecialchars($registro['sede_nombre']) . "</td>"; // Mostrar nombre de la sede
-                echo "<td>" . htmlspecialchars($registro['departamento_nombre']) . "</td>"; // Mostrar nombre del departamento
-                echo "<td>" . htmlspecialchars($registro['presupuesto']) . "</td>"; // Mostrar presupuesto
+                echo "<td>" . htmlspecialchars($registro['sede_nombre']) . "</td>"; 
+                echo "<td>" . htmlspecialchars($registro['departamento_nombre']) . "</td>"; 
+                echo "<td>" . htmlspecialchars($registro['presupuesto']) . "</td>";
                 echo "<td>";
                 echo "<a href='modificar.php?idDepartamento=" . htmlspecialchars($registro['departamento_id']) . "' class='estilo_enlace'>&#9998;</a>"; // Icono de edición
                 echo "<a href='borrar.php?idDepartamento=" . htmlspecialchars($registro['departamento_id']) . "' class='confirmacion_borrar'>&#128465;</a>"; // Icono de borrar
@@ -65,5 +65,15 @@ require_once("../utiles/variables.php");
     $resultado = null;
     $conexion = null;
     ?>
+    <script type="text/javascript">
+        var elementos = document.getElementsByClassName("confirmacion_borrar");
+        var confirmFunc = function(e) {
+            if (!confirm('Está seguro de que desea borrar este regitro?')) e.preventDefault();
+        };
+        for (var i = 0, l = elementos.length; i < l; i++) {
+            elementos[i].addEventListener('click', confirmFunc, false);
+        }
+    </script>
 </body>
+
 </html>
